@@ -1303,9 +1303,14 @@ class AnalysisPlotter(fermipy.config.Configurable):
         tsmap_renorm = copy.deepcopy(tsmap)
         tsmap_renorm.data -= np.max(tsmap_renorm.data)
 
-        skydir = loc['tsmap_peak'].geom.get_coord(flat=True)
-        frame = loc['tsmap_peak'].geom.frame
-        skydir = MapCoord.create(skydir, frame=frame).skycoord
+        # TODO: the API changed in Gammmapy this supports v0.18 and later
+        try:
+            skydir = loc['tsmap_peak'].geom.get_coord(flat=True)
+            frame = loc['tsmap_peak'].geom.frame
+            skydir = MapCoord.create(skydir, frame=frame).skycoord
+        except TypeError:
+            coord = loc['tsmap_peak'].geom.get_coord()
+            skydir = coord.flat.skycoord
 
         path_effect = PathEffects.withStroke(linewidth=2.0,
                                              foreground="black")

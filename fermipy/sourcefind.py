@@ -631,8 +631,13 @@ class SourceFind(object):
         if use_cache and not use_pylike:
             self._create_srcmap_cache(src.name, src)
 
-        coord = MapCoord.create(lnlmap.geom.get_coord(flat=True),
-                                frame=lnlmap.geom.frame)
+        # TODO: the API changed in Gammmapy this supports v0.18 and later
+        try:
+            coord = MapCoord.create(lnlmap.geom.get_coord(flat=True),
+                                    frame=lnlmap.geom.frame)
+        except TypeError:
+            coord = lnlmap.geom.get_coord().flat
+
         scan_skydir = coord.skycoord.icrs
         for lon, lat, ra, dec in zip(coord.lon, coord.lat,
                                      scan_skydir.ra.deg, scan_skydir.dec.deg):
